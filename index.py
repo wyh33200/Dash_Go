@@ -2,10 +2,11 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
-from apps import DAU_page, dalyLogin
+from apps import dalyLogin
+from apps import daily
 from app import app
 
-# 侧边栏的样式参数。我们使用位置:固定和固定宽度
+# 侧边栏的样式参数。使用位置:固定和固定宽度
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,
@@ -25,7 +26,7 @@ CONTENT_STYLE = {
 
 sidebar = html.Div(
     [
-        html.H2("校校招", className="display-4",title='校校招，连接高校与企业的平台'),
+        html.H2("校校招", className="display-4", title='校校招，连接高校与企业的平台'),
         html.P(
             "校校招轻量级分析平台", className="lead"
         ),
@@ -52,9 +53,9 @@ def render_page_content(pathname):
     if pathname == "/":
         return html.P("pass")
     elif pathname == "/page-1":
-        return DAU_page.layout_index
+        return daily.layout_index
     elif pathname == "/page-2":
-        return dalyLogin.layout_index
+        return html.P("pass")
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron(
         [
@@ -66,4 +67,4 @@ def render_page_content(pathname):
 
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', debug=True, threaded=True, port=808)
+    app.run_server(host='0.0.0.0', debug=True, threaded=True, port=8080)
