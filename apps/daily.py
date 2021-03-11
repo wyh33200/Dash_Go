@@ -38,7 +38,7 @@ layout_index = html.Div([
         html.Span(id='pv', style={'font-size': '36px', 'font-weight': '600'}),
         html.Div('次。平均人均浏览', style={'font-size': '26px'}),
         html.Span(id='pv-uv', style={'font-size': '36px', 'font-weight': '600'}),
-        html.Div('页面', style={'font-size': '26px'})
+        html.Div('个页面', style={'font-size': '26px'})
     ]),
     html.Div([dcc.Graph(id='graph-with-uv'),
               dcc.Graph(id='graph-with-pv'),

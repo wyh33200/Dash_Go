@@ -2,7 +2,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
-from apps import dalyLogin
 from apps import daily
 from app import app
 
@@ -34,9 +33,10 @@ sidebar = html.Div(
         html.Hr(),
         dbc.Nav([
             dbc.NavItem(dbc.NavLink("首页", href="/", active="exact")),
-            html.H3('用户端数据概览', className='lead',style={}),
+            html.H3('用户端数据概览', className='lead', style={}),
             dbc.NavItem(dbc.NavLink("每日数据概览", href="/page-1", active="exact", )),
-            dbc.NavItem(dbc.NavLink("Page 2", href="/page-2", active="exact", )),
+            html.H3('三端日报', className='lead', style={}),
+            dbc.NavItem(dbc.NavLink("学生端日报", href="/page-2", active="exact", )),
         ],
             vertical="md",
             style={}

@@ -10,7 +10,9 @@ cnn_root = create_engine("mysql+mysqlconnector://root:root@localhost:3306/dash")
 def per_xxz_data_get(date_):
     table_date = date_[:6]
     table = 'per_wxapp_xxz_log_behavior_'+table_date
-    date_ = list(date_)
+
+    date_ = list(str(int(date_)-1))
+    print(date_)
     date_.insert(4, '-')
     date_.insert(7, '-')
     date_ = ''.join(date_)
@@ -25,10 +27,12 @@ def per_xxz_data_get(date_):
 # 增加定时任务
 if __name__ == '__main__':
     while True:
-
+        print("\r程序已启动,当前时间：{now}".format(now=time.strftime("%H:%M:%S")), end="", flush=True)
+        time.sleep(1)
         if time.strftime('%H:%M') == '03:30':
+            print('开始执行程序')
             time_now = time.strftime('%Y%m%d')
             df = per_xxz_data_clean(per_xxz_data_get(time_now))
             data_to_mysql(df)
             print("{time}数据处理完成".format(time=time))
-            time.sleep(60)
+            time.sleep(61)

@@ -16,7 +16,7 @@ def per_xxz_data_get(date):
     date.insert(4, '-')
     date.insert(7, '-')
     date = ''.join(date)
-    sql = "select distinct pid,DATE_FORMAT(logtime,'%%Y-%%m-%%d') date,count(1) handle_num from " \
+    sql = "select distinct pid,DATE_FORMAT(logtime,'%Y-%m-%d') date,count(1) handle_num from " \
           "{table} where logtime like '%%{date}%%' group by 1,2".format(table=table, date=date)
     print(sql)
     data = pd.read_sql(sql, cnn_xxz_log)
@@ -26,9 +26,9 @@ def per_xxz_data_get(date):
 
 # 单独增加某天
 if __name__ == '__main__':
-    for time in ['20210307']:
+    for time in ['20210311']:
         df = per_xxz_data_clean(per_xxz_data_get(time))
         data_to_mysql(df)
         print("{time}数据处理完成".format(time=time))
-    print("==" * 60)
+    print("==" * 30)
     print("数据处理完成")
