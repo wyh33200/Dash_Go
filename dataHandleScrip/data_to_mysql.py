@@ -1,9 +1,9 @@
 import pandas as pd
 from sqlalchemy import create_engine
 
-cnn_root = create_engine("mysql+pymysql://root:root@localhost:3306/dash")
-cnn_xxz_log = create_engine("mysql+pymysql://xxzlog:xxz@log@192.168.2.6:3306/xxz_log")
-cnn_xxz_base = create_engine("mysql+pymysql://xxzdata:chitone@xxzdata@192.168.2.225:3306/xxz_base")
+cnn_root = create_engine("mysql+mysqlconnector://root:root@localhost:3306/dash")
+cnn_xxz_log = create_engine("mysql+mysqlconnector://xxzlog:xxz@log@192.168.2.6:3306/xxz_log")
+cnn_xxz_base = create_engine("mysql+mysqlconnector://xxzdata:chitone@xxzdata@192.168.2.225:3306/xxz_base")
 
 
 # 获取用户的Log表，统计每日登录的用户群体

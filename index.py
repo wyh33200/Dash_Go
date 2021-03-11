@@ -23,6 +23,7 @@ CONTENT_STYLE = {
     "padding": "2rem 1rem",
 }
 
+header = html.Header(html.Title('校校招'))
 
 sidebar = html.Div(
     [
