@@ -6,10 +6,11 @@ cnn_xxz_log = create_engine("mysql+mysqlconnector://xxzlog:xxz@log@192.168.2.6:3
 cnn_root = create_engine("mysql+mysqlconnector://root:root@localhost:3306/dash")
 
 
-def data_handle(table_date):
+def data_handle(date):
+    # date = '20210310'
     # table_date = '202103'
-    table_date = table_date[:6]
-    date_ = list(str(int(table_date) - 1))
+    table_date = date[:6]
+    date_ = list(str(int(date) - 1))
     date_.insert(4, '-')
     date_.insert(7, '-')
     date_ = ''.join(date_)
@@ -63,7 +64,7 @@ def data_handle(table_date):
                 pid,
                 cmd_cn 
             FROM
-            per_wxapp_xxz_log_behavior_{table_date} logtime like '%{date_}%') tb 
+            per_wxapp_xxz_log_behavior_{table_date} where logtime like '%{date_}%') tb 
 
         GROUP BY
             1 
@@ -83,7 +84,7 @@ def data_handle(table_date):
             sum( CASE WHEN cmd_cn LIKE '%简历诊断【点击】%' THEN 1 ELSE 0 END ) resumeDiagnoseClickNum,
             sum( CASE WHEN cmd_cn LIKE '%就业辅导【点击】%' THEN 1 ELSE 0 END ) employmentCoachClickNum 
         FROM
-            per_wxapp_xxz_log_behavior_{table_date} logtime like '%{date_}%'
+            per_wxapp_xxz_log_behavior_{table_date} where logtime like '%{date_}%'
         GROUP BY
             1 
         ) tb2 
@@ -97,15 +98,15 @@ def data_handle(table_date):
     (select date,sum(case when cmd = '/pages/index/index' then 1 else 0 end) homeClick,
     sum(case when cmd = '/pages/per/index/index' then 1 else 0 end) myClick,
     sum(case when cmd = '/pages/new/index/index' then 1 else 0 end) messageClick FROM
-    (select distinct DATE_FORMAT(logtime,'%Y-%m-%d') date,pid,cmd from per_wxapp_xxz_log_behavior_{table_date}) tb 
-    GROUP BY 1) tb1
+    (select distinct DATE_FORMAT(logtime,'%Y-%m-%d') date,pid,cmd from per_wxapp_xxz_log_behavior_{table_date} 
+    where logtime like '%{date_}%' ) tb GROUP BY 1) tb1
     left join
     (select DATE_FORMAT(logtime,'%Y-%m-%d') date,
     sum(case when cmd = '/pages/index/index' then 1 else 0 end) homeClickNum,
     sum(case when cmd = '/pages/per/index/index' then 1 else 0 end) myClickNum,
     sum(case when cmd = '/pages/new/index/index' then 1 else 0 end) messageClickNum 
-    FROM per_wxapp_xxz_log_behavior_{table_date} GROUP BY 1 ) tb2 on tb1.date=tb2.date
-    '''.format(table_date=table_date)
+    FROM per_wxapp_xxz_log_behavior_{table_date} where logtime like '%{date_}%' GROUP BY 1 ) tb2 on tb1.date=tb2.date
+    '''.format(table_date=table_date, date_=date_)
     data_cmd = pd.read_sql(sql_cmd, cnn_xxz_log)
     print("{table_date}表2数据提取成功".format(table_date=table_date))
 
@@ -127,8 +128,8 @@ if __name__ == '__main__':
     while True:
         print("\r程序已启动,当前时间：{now}".format(now=time.strftime("%H:%M:%S")), end="", flush=True)
         time.sleep(1)
-        if time.strftime('%H:%M') == '03:40':
-            print('开始执行程序\t任务开始时间： 03:40')
+        if time.strftime('%H:%M') == '03:35':
+            print('开始执行程序\t任务开始时间： 03:35')
             time_now = time.strftime('%Y%m%d')
             df = data_handle(time_now)
             data_to_mysql(df)

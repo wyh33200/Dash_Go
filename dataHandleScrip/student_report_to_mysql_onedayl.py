@@ -6,9 +6,15 @@ cnn_xxz_log = create_engine("mysql+mysqlconnector://xxzlog:xxz@log@192.168.2.6:3
 cnn_root = create_engine("mysql+mysqlconnector://root:root@localhost:3306/dash")
 
 
-def data_handle(table_date):
+def data_handle(time_):
+    # time_ = '20210312'
     # table_date = '202103'
-    print('开始获取{table_date}数据'.format(table_date=table_date))
+    table_date = time_[:6]
+    time_ = list(time_)
+    time_.insert(4, '-')
+    time_.insert(7, '-')
+    time_ = ''.join(time_)
+    print('开始获取{time_}数据'.format(time_=time_))
     sql = r'''
     SELECT
         tb1.date,
@@ -58,7 +64,7 @@ def data_handle(table_date):
                 pid,
                 cmd_cn 
             FROM
-            per_wxapp_xxz_log_behavior_{table_date} ) tb 
+            per_wxapp_xxz_log_behavior_{table_date} where logtime like '%{time_}%' ) tb 
             
         GROUP BY
             1 
@@ -78,12 +84,12 @@ def data_handle(table_date):
             sum( CASE WHEN cmd_cn LIKE '%简历诊断【点击】%' THEN 1 ELSE 0 END ) resumeDiagnoseClickNum,
             sum( CASE WHEN cmd_cn LIKE '%就业辅导【点击】%' THEN 1 ELSE 0 END ) employmentCoachClickNum 
         FROM
-            per_wxapp_xxz_log_behavior_{table_date}
+            per_wxapp_xxz_log_behavior_{table_date} where logtime like '%{time_}%'
         GROUP BY
             1 
         ) tb2 
         ON tb1.date = tb2.date
-    '''.format(table_date=table_date)
+    '''.format(table_date=table_date, time_=time_)
     data = pd.read_sql(sql, cnn_xxz_log)
     print("{table_date}表1数据提取成功".format(table_date=table_date))
 
@@ -92,15 +98,16 @@ def data_handle(table_date):
     (select date,sum(case when cmd = '/pages/index/index' then 1 else 0 end) homeClick,
     sum(case when cmd = '/pages/per/index/index' then 1 else 0 end) myClick,
     sum(case when cmd = '/pages/new/index/index' then 1 else 0 end) messageClick FROM
-    (select distinct DATE_FORMAT(logtime,'%Y-%m-%d') date,pid,cmd from per_wxapp_xxz_log_behavior_{table_date}) tb 
+    (select distinct DATE_FORMAT(logtime,'%Y-%m-%d') date,pid,cmd from per_wxapp_xxz_log_behavior_{table_date} 
+    where logtime like '%{time_}%') tb 
     GROUP BY 1) tb1
     left join
     (select DATE_FORMAT(logtime,'%Y-%m-%d') date,
     sum(case when cmd = '/pages/index/index' then 1 else 0 end) homeClickNum,
     sum(case when cmd = '/pages/per/index/index' then 1 else 0 end) myClickNum,
     sum(case when cmd = '/pages/new/index/index' then 1 else 0 end) messageClickNum 
-    FROM per_wxapp_xxz_log_behavior_{table_date} GROUP BY 1 ) tb2 on tb1.date=tb2.date
-    '''.format(table_date=table_date)
+    FROM per_wxapp_xxz_log_behavior_{table_date} where logtime like '%{time_}%' GROUP BY 1 ) tb2 on tb1.date=tb2.date
+    '''.format(table_date=table_date, time_=time_)
     data_cmd = pd.read_sql(sql_cmd, cnn_xxz_log)
     print("{table_date}表2数据提取成功".format(table_date=table_date))
 
@@ -119,8 +126,8 @@ def data_to_mysql(data):
 
 
 if __name__ == '__main__':
-    for time in ['202009', '202010', '202011', '202012', '202101', '202102', '202103']:
-        df = data_handle(time)
-        data_to_mysql(df)
-        print('{time}月数据执行完成'.format(time=time))
-        print('▉'*30)
+    time = '20210312'
+    df = data_handle(time)
+    data_to_mysql(df)
+    print('{time}数据执行完成'.format(time=time))
+    print('▉'*30)

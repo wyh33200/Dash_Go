@@ -2,7 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
-from apps import daily
+from apps import daily, student_daily_report
 from app import app
 
 # 侧边栏的样式参数。使用位置:固定和固定宽度
@@ -56,7 +56,7 @@ def render_page_content(pathname):
     elif pathname == "/page-1":
         return daily.layout_index
     elif pathname == "/page-2":
-        return html.P("pass")
+        return student_daily_report.layout_index
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron(
         [
