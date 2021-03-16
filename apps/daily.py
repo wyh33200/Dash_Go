@@ -6,9 +6,11 @@ from dash.exceptions import PreventUpdate
 from sqlalchemy import create_engine
 
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 import datetime
 
+from sklearn.linear_model import LinearRegression
 
 from app import app
 
@@ -40,10 +42,19 @@ layout_index = html.Div([
         html.Span(id='pv-uv', style={'font-size': '36px', 'font-weight': '600'}),
         html.Div('个页面', style={'font-size': '26px'})
     ]),
-    html.Div([dcc.Graph(id='graph-with-uv'),
+    html.Div([
+        html.Div([
+            dcc.RadioItems(
+                id='pv-value-type',
+                options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
+                value='Linear',
+                labelStyle={'display': 'inline-block'}
+            ),
+            dcc.Graph(id='graph-with-uv')]),
               dcc.Graph(id='graph-with-pv'),
               dcc.Graph(id='graph-with-pv-uv'),
-              dcc.Graph(id='graph-with-avg'),]
+              dcc.Graph(id='graph-with-avg'),
+    ]
              )
 ])
 
@@ -54,11 +65,21 @@ def uv_func(df):
         x=df['date'].unique(),
         y=df.groupby('date').agg({'pid': 'count'})['pid'],
     )
-    per_num_trace_fig = go.Figure(data=per_num_trace,
-                                  layout={'title': '每日活跃用户',
+    per_num_trace_fig = go.Figure(layout={'title': '每日活跃用户',
                                           'xaxis': {'tickformat': '%Y-%m-%d'},
                                           'template': 'none'})
+    per_num_trace_fig.add_trace(per_num_trace)
     return per_num_trace_fig
+
+
+def pv_fix(df):
+    # pv 拟合直线
+    y = df.groupby('date').agg({'handle_num': 'sum'})['handle_num']
+    X = np.arange(len(df)).reshape(len(df), -1)
+    regr = LinearRegression()
+    regr.fit(X, y)
+    formula = str(round(regr.coef_[0], 2)) + 'x+' + str(round(regr.intercept_, 2))
+    return regr.predict(X), formula
 
 
 def pv_func(df):
@@ -76,6 +97,7 @@ def pv_func(df):
 
 
 def pv_uv_func(df):
+    # 两天直线在一张图
     # 每人，每日页面浏览量
     pv_num_trace = go.Scatter(
         x=df['date'].unique(),
@@ -102,19 +124,44 @@ def pv_uv_func(df):
     return figure
 
 
+def avg_fix(df):
+    # 平均页面浏览量线性回归直线，
+    # formula(str) 拟合公式
+    # regr.predict(X)(array) 拟合值
+    df['per_ave'] = df.groupby('date')['handle_num'].transform('sum') / df.groupby('date')[
+        'pid'].transform('count')
+    df = df[['date', 'per_ave']].drop_duplicates('date')
+    X = np.arange(len(df)).reshape(len(df), -1)
+    y = df['per_ave']
+    regr = LinearRegression()
+    regr.fit(X, y)
+    formula = str(round(regr.coef_[0], 2))+'x+'+str(round(regr.intercept_, 2))
+    return regr.predict(X), formula
+
+
 def avg_func(df):
-    # 平均每人页面浏览量
-    per_num_trace = go.Scatter(
-        x=df['date'].unique(),
-        y=df.groupby('date').agg({'handle_num': 'sum'})['handle_num']/df.groupby('date').agg({'pid': 'count'})['pid'],
-        name='平均页面浏览量'
-    )
-    avg_trace_fig = go.Figure(data=per_num_trace,
+    # per_num_trace 平均每人页面浏览量
+    # per_fix_trace 拟合直线
+    avg_trace_fig = go.Figure(
                               layout={'title': '每日每人平均页面浏览量',
                                       'xaxis': {'tickformat': '%Y-%m-%d'},
                                       'template': 'none',
-                                      'showlegend': True, # 图例
+                                      'showlegend': True,  # 图例
                                       })
+    per_num_trace = go.Scatter(
+        x=df['date'].unique(),
+        y=df.groupby('date').agg({'handle_num': 'sum'})['handle_num']/df.groupby('date').agg({'pid': 'count'})['pid'],
+        line=dict(color='royalblue'),
+        name='平均页面浏览量'
+    )
+    per_fix_trace = go.Scatter(
+        x=df['date'].unique(),
+        y=avg_fix(df)[0],
+        name=avg_fix(df)[1],
+        line=dict(color='#7EFF99', width=4, dash='dash')
+    )
+    avg_trace_fig.add_traces([per_num_trace, per_fix_trace])
+    # avg_trace_fig.add_trace()
     return avg_trace_fig
 
 
@@ -124,7 +171,8 @@ def avg_func(df):
                Output('graph-with-uv', 'figure'),
                Output('graph-with-pv', 'figure'),
                Output('graph-with-pv-uv', 'figure'),
-               Output('graph-with-avg', 'figure'),],
+               Output('graph-with-avg', 'figure'),
+               ],
               [Input('my-date-picker-range', 'start_date'),
                Input('my-date-picker-range', 'end_date')]
               )
