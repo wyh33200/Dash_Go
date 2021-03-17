@@ -27,7 +27,7 @@ layout_index = html.Div([
             display_format='Y-MM-DD',
             month_format='Y-MM',
             start_date=datetime.date.today()-datetime.timedelta(days=7),
-            end_date=datetime.date.today()-datetime.timedelta(days=1)
+            end_date=datetime.date.today()
         ),
         html.Div(id='output-container-date-picker-range')
     ]),
@@ -36,25 +36,16 @@ layout_index = html.Div([
     html.Div(className='row', style={'align-items': 'center'}, children=[
         html.Div('日期范围内一共登录', style={'font-size': '26px'}),
         html.Span(id='uv', style={'font-size': '36px', 'font-weight': '600'}),
-        html.Div('人。页面共浏览', style={'font-size': '26px'}),
+        html.Div('人(去除重复登录人数)。页面共浏览', style={'font-size': '26px'}),
         html.Span(id='pv', style={'font-size': '36px', 'font-weight': '600'}),
         html.Div('次。平均人均浏览', style={'font-size': '26px'}),
         html.Span(id='pv-uv', style={'font-size': '36px', 'font-weight': '600'}),
         html.Div('个页面', style={'font-size': '26px'})
     ]),
-    html.Div([
-        html.Div([
-            dcc.RadioItems(
-                id='pv-value-type',
-                options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
-                value='Linear',
-                labelStyle={'display': 'inline-block'}
-            ),
-            dcc.Graph(id='graph-with-uv')]),
+    html.Div([dcc.Graph(id='graph-with-uv'),
               dcc.Graph(id='graph-with-pv'),
               dcc.Graph(id='graph-with-pv-uv'),
-              dcc.Graph(id='graph-with-avg'),
-    ]
+              dcc.Graph(id='graph-with-avg'), ]
              )
 ])
 
@@ -171,8 +162,7 @@ def avg_func(df):
                Output('graph-with-uv', 'figure'),
                Output('graph-with-pv', 'figure'),
                Output('graph-with-pv-uv', 'figure'),
-               Output('graph-with-avg', 'figure'),
-               ],
+               Output('graph-with-avg', 'figure'), ],
               [Input('my-date-picker-range', 'start_date'),
                Input('my-date-picker-range', 'end_date')]
               )
