@@ -186,22 +186,22 @@ class Weekly:
         # 先运行第一天，后续再读取增加
         date = datetime.datetime.strptime(self.date, "%Y-%m-%d").date()  # 转成日期格式
         week_start = (date - timedelta(days=date.weekday())).strftime("%Y-%m-%d")
-        week_end = (date + timedelta(days=6)).strftime("%Y-%m-%d")
+        week_end = (date + timedelta(days=1)).strftime("%Y-%m-%d")
         if week_start[:7].replace('-', '') != self.date[:7].replace('-', ''):
             table_start = week_start[:7].replace('-', '')
             table_end = self.date[:7].replace('-', '')
             sql = '''
-            select count(distinct tb.per_user_id) from (select * from act_view_behavior_log_{table_start} 
+            select count(distinct tb.pid) from (select * from per_wxapp_xxz_log_behavior_{table_start} 
             union all 
-            select * from act_view_behavior_log_{table_end}) tb
-            where tb.create_date between '{week_start}' and '{week_end}'
+            select * from per_wxapp_xxz_log_behavior_{table_end}) tb
+            where tb.logtime between '{week_start}' and '{week_end}'
             '''.format(table_start=table_start, table_end=table_end, week_end=week_end, week_start=week_start)
             week_num = pd.read_sql(sql, cnn_log).loc[0][0]
         else:
             table = week_start[:7].replace('-', '')
             sql = '''
-            select count(distinct per_user_id) from act_view_behavior_log_{table} 
-            where create_date between '{week_start}' and '{week_end}'
+            select count(distinct pid) from per_wxapp_xxz_log_behavior_{table} 
+            where logtime between '{week_start}' and '{week_end}'
             '''.format(table=table, week_end=week_end, week_start=week_start)
             week_num = pd.read_sql(sql, cnn_log).loc[0][0]
         print('{date}周度累加数据统计完成'.format(date=self.date))
@@ -235,13 +235,13 @@ class Weekly:
 
 
 if __name__ == '__main__':
-    start_date = datetime.datetime.strptime('2020-08-31', "%Y-%m-%d")
+    start_date = datetime.datetime.strptime('2020-09-07', "%Y-%m-%d")
     end_date = datetime.datetime.strptime('2021-03-25', "%Y-%m-%d")
     while start_date <= end_date:
         start_date += timedelta(days=1)
         data = Weekly(start_date)
         data.main()
         print('{date}数据清洗执行完毕'.format(date=start_date))
-    # date = Weekly(datetime.datetime.strptime('2021-03-24', "%Y-%m-%d"))
-    # print(next(date.resume_num()))
+    # date = Weekly(datetime.datetime.strptime('2021-03-22', "%Y-%m-%d"))
+    # print(next(date.weekly_num()))
 
