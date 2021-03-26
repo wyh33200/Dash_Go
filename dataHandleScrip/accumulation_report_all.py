@@ -234,15 +234,12 @@ class Weekly:
         return _
 
 
-# if __name__ == '__main__':
-#     start_date = datetime.datetime.strptime('2020-08-31', "%Y-%m-%d")
-#     end_date = datetime.datetime.strptime('2021-03-25', "%Y-%m-%d")
-#     while start_date <= end_date:
-#         start_date += timedelta(days=1)
-#         data = Weekly(start_date)
-#         data.main()
-#         print('{date}数据清洗执行完毕'.format(date=start_date))
-
 if __name__ == '__main__':
-    pass
+    start_date = datetime.datetime.strptime('2020-08-31', "%Y-%m-%d")
+    end_date = datetime.datetime.strptime('2021-03-25', "%Y-%m-%d")
+    while start_date <= end_date:
+        start_date += timedelta(days=1)
+        data = Weekly(start_date)
+        data.main()
+        print('{date}数据清洗执行完毕'.format(date=start_date))
 
