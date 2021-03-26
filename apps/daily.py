@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 import datetime
 
 from sklearn.linear_model import LinearRegression
-
+from sklearn.preprocessing import PolynomialFeatures
 from app import app
 
 
@@ -63,27 +63,36 @@ def uv_func(df):
     return per_num_trace_fig
 
 
-def pv_fix(df):
-    # pv 拟合直线
-    y = df.groupby('date').agg({'handle_num': 'sum'})['handle_num']
-    X = np.arange(len(df)).reshape(len(df), -1)
-    regr = LinearRegression()
-    regr.fit(X, y)
-    formula = str(round(regr.coef_[0], 2)) + 'x+' + str(round(regr.intercept_, 2))
-    return regr.predict(X), formula
+# def pv_fix(df):
+#     # pv 拟合直线
+#     poly_reg = PolynomialFeatures(degree=3)
+#     y = df.groupby('date').agg({'handle_num': 'sum'})['handle_num'].values.reshape(-1, 1)
+#     y = poly_reg.fit_transform(y)
+#     X = np.arange(len(df['date'].unique())).reshape(-1, 1)
+#     regr = LinearRegression()
+#     regr.fit(X, y)
+#     formula = str(np.round(regr.coef_[0], 2)) + 'x+' + str(np.round(regr.intercept_, 2))
+#     return regr.predict(X), formula
 
 
 def pv_func(df):
     # 每日页面浏览量
+    handle_num_trace_fig = go.Figure(layout={'title': '每日页面浏览量',
+                                             'xaxis': {'tickformat': '%Y-%m-%d'},
+                                             'template': 'none',
+                                             })
     per_num_trace = go.Scatter(
         x=df['date'].unique(),
         y=df.groupby('date').agg({'handle_num': 'sum'})['handle_num'],
     )
-    handle_num_trace_fig = go.Figure(data=per_num_trace,
-                                     layout={'title': '每日页面浏览量',
-                                             'xaxis': {'tickformat': '%Y-%m-%d'},
-                                             'template': 'none',
-                                             })
+    # pv_fix_trace = go.Scatter(
+    #     x=df['date'].unique(),
+    #     y=pv_fix(df)[0],
+    #     name=avg_fix(df)[1],
+    #     line=dict(color='#7EFF99', width=4, dash='dash')
+    # )
+    # handle_num_trace_fig.add_traces([per_num_trace, pv_fix_trace])
+    handle_num_trace_fig.add_trace(per_num_trace)
     return handle_num_trace_fig
 
 
