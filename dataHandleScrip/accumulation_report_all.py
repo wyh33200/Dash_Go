@@ -68,10 +68,10 @@ class Weekly:
         resume = '''
         SELECT count(account_id) FROM
         (SELECT account_id FROM per_resume where fre_date >'2020-01-01' and pass>='0' and education_info is not null and
-        fre_date <{date}
+        fre_date <'{date}'
         UNION
         SELECT per_user_id FROM per_attach_resume 
-        WHERE del_status = '0' and upload_date <{date}) as tb1'''.format(date=self.date)
+        WHERE del_status = '0' and upload_date <'{date}') as tb1'''.format(date=self.date)
         resume = pd.read_sql(resume, cnn_base)
         resume = resume.loc[0][0]
         print('{date}简历量统计完成'.format(date=self.date))
@@ -242,4 +242,6 @@ if __name__ == '__main__':
         data = Weekly(start_date)
         data.main()
         print('{date}数据清洗执行完毕'.format(date=start_date))
+    # date = Weekly(datetime.datetime.strptime('2021-03-24', "%Y-%m-%d"))
+    # print(next(date.resume_num()))
 
