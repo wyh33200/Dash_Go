@@ -242,6 +242,7 @@ if __name__ == '__main__':
         data = Weekly(start_date)
         data.main()
         print('{date}数据清洗执行完毕'.format(date=start_date))
-    # date = Weekly(datetime.datetime.strptime('2021-03-22', "%Y-%m-%d"))
+    # date = Weekly(datetime.datetime.strptime('2021-03-28', "%Y-%m-%d"))
+    # date.main()
     # print(next(date.weekly_num()))
 

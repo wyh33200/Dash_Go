@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 from accumulation_report_all import *
 
 
