@@ -17,6 +17,7 @@ class DailyReport:
         self.cnn_root = create_engine("mysql+mysqlconnector://root:root@localhost:3306/dash")
 
     def behavior_handle_data(self):
+        # 行为日志清洗
         sql = r'''
             SELECT
                 tb1.date,
@@ -97,6 +98,7 @@ class DailyReport:
         return data_
 
     def click_handle_data(self):
+        # 点击量的数据清洗
         sql_cmd = r'''
             select tb1.date,tb1.homeClick,tb2.homeClickNum,tb1.myClick,tb2.myClickNum,tb1.messageClick,tb2.messageClickNum FROM 
             (select date,sum(case when cmd = '/pages/index/index' then 1 else 0 end) homeClick,
@@ -117,6 +119,7 @@ class DailyReport:
         return data_cmd_
 
     def merge_data(self):
+        # 两张表合在一起
         data_ = self.behavior_handle_data()
         data_cmd_ = self.click_handle_data()
         data_merge = pd.merge(data_, data_cmd_, on=['date'])
@@ -132,6 +135,7 @@ class DailyReport:
         return data_merge
 
     def main(self):
+        # 主函数，注入SQL
         data_merge = self.merge_data()
         data_merge.to_sql('per_gov_student_report', self.cnn_root, if_exists='append')
         print("{}数据注入完成".format(self.time_))

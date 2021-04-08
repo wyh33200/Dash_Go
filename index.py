@@ -34,7 +34,8 @@ sidebar = html.Div(
         dbc.Nav([
             dbc.NavItem(dbc.NavLink("首页", href="/", active="exact")),
             html.H3('用户端数据概览', className='lead', style={}),
-            dbc.NavItem(dbc.NavLink("每日数据概览", href="/page-1", active="exact", )),
+            dbc.NavItem(dbc.NavLink("每日数据概览", href="/per/report", active="exact", )),
+            dbc.NavItem(dbc.NavLink("用户画像", href="/per/portrayal", active="exact", )),
             html.H3('三端日报', className='lead', style={}),
             dbc.NavItem(dbc.NavLink("学生端日报", href="/page-2", active="exact", )),
         ],
@@ -53,8 +54,10 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 def render_page_content(pathname):
     if pathname == "/":
         return html.P("pass")
-    elif pathname == "/page-1":
+    elif pathname == "/per/report":
         return daily.layout_index
+    elif pathname == "/per/portrayal":
+        return html.P("pass")
     elif pathname == "/page-2":
         return student_daily_report.layout_index
     # If the user tries to reach a different page, return a 404 message

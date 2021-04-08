@@ -26,7 +26,7 @@ def per_xxz_data_get(date):
 
 # 单独增加某天
 if __name__ == '__main__':
-    for time in ['20210311']:
+    for time in ['20210406']:
         df = per_xxz_data_clean(per_xxz_data_get(time))
         data_to_mysql(df)
         print("{time}数据处理完成".format(time=time))

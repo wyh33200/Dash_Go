@@ -126,7 +126,7 @@ def data_to_mysql(data):
 
 
 if __name__ == '__main__':
-    time = '20210312'
+    time = '20210406'
     df = data_handle(time)
     data_to_mysql(df)
     print('{time}数据执行完成'.format(time=time))
