@@ -2,7 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
-from apps import daily, student_daily_report
+from apps import daily, student_daily_report, home
 from app import app
 
 # 侧边栏的样式参数。使用位置:固定和固定宽度
@@ -53,7 +53,7 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/":
-        return html.P("pass")
+        return home.layout_index
     elif pathname == "/per/report":
         return daily.layout_index
     elif pathname == "/per/portrayal":
