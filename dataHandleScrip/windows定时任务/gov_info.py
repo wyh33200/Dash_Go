@@ -23,7 +23,7 @@ class GPI(GovPerInfo):
 
 
 if __name__ == '__main__':
-    time = (datetime.datetime.now() - datetime.timedelta(days=2)).strftime("%Y-%m-%d")
+    time = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
     gpi = GPI(time)
     df = gpi.per_gov_data_clean(gpi.per_gov_data_get())
     gpi.data_to_mysql(df)
