@@ -188,12 +188,12 @@ def month_func(date):
               )
 def daily_func_gov(date):
     sql = f'''
-    select count(distinct pid) from per_gov_student_report where date = '{date}'
+    select count(distinct pid) from per_gov_daily_info where date = '{date}'
     '''
     uv = pd.read_sql(sql, cnn_root).loc[0][0]
     date = datetime.datetime.strptime(date, "%Y-%m-%d").date() - datetime.timedelta(days=1)
     sql = f'''
-        select count(distinct pid) from per_gov_student_report where date = '{date}'
+        select count(distinct pid) from per_gov_daily_info where date = '{date}'
         '''
     yest = pd.read_sql(sql, cnn_root).loc[0][0]
     daily_ratio, daily_title_style, daily_font_style = compare_data(uv, yest)
@@ -214,13 +214,13 @@ def daily_func_gov(date):
 def weekly_func(date):
     date_ = datetime.datetime.strptime(date, "%Y-%m-%d").date() - datetime.timedelta(days=7)
     sql = f'''
-    select count(distinct pid) from per_gov_student_report where date between '{date_}' and '{date}'
+    select count(distinct pid) from per_gov_daily_info where date between '{date_}' and '{date}'
     '''
     weekly = pd.read_sql(sql, cnn_root).loc[0][0]
     date_ = datetime.datetime.strptime(date, "%Y-%m-%d").date() - datetime.timedelta(days=8)
     date__ = datetime.datetime.strptime(date, "%Y-%m-%d").date() - datetime.timedelta(days=15)
     sql = f'''
-        select count(distinct pid) from per_gov_student_report where date between '{date__}' and '{date_}'
+        select count(distinct pid) from per_gov_daily_info where date between '{date__}' and '{date_}'
         '''
     last_week = pd.read_sql(sql, cnn_root).loc[0][0]
     weekly_ratio, weekly_title_style, weekly_font_style = compare_data(weekly, last_week)
@@ -242,13 +242,13 @@ def weekly_func(date):
 def month_func(date):
     month = datetime.datetime.strptime(date, "%Y-%m-%d").date() - datetime.timedelta(days=30)
     month_sql = f'''
-    select count(distinct pid) from per_gov_student_report where date between '{month}' and '{date}'
+    select count(distinct pid) from per_gov_daily_info where date between '{month}' and '{date}'
     '''
     month = pd.read_sql(month_sql, cnn_root).loc[0][0]
     date_ = datetime.datetime.strptime(date, "%Y-%m-%d").date() - datetime.timedelta(days=31)
     date__ = datetime.datetime.strptime(date, "%Y-%m-%d").date() - datetime.timedelta(days=60)
     sql = f'''
-        select count(distinct pid) from per_gov_student_report where date between '{date__}' and '{date_}'
+        select count(distinct pid) from per_gov_daily_info where date between '{date__}' and '{date_}'
         '''
     last_week = pd.read_sql(sql, cnn_root).loc[0][0]
     month_ratio, month_title_style, month_font_style = compare_data(month, last_week)
