@@ -20,7 +20,7 @@ def per_xxz_data_get(date='202009'):
 def per_xxz_data_clean(data):
     pid = str(list(data['pid'].unique())).replace('[', '(').replace(']', ')')
     sql = '''
-    select account_id,gender,degree,school_name,school_college_name,special_name,grade,degree_from from 
+    select account_id,gender,degree,school_name,school_college_name,special_name,grade,degree_from,upload_date from 
     (select * from per_degree_info order by id desc)tb 
     where account_id in {pid}
     group by 1
@@ -38,7 +38,7 @@ def data_to_mysql(data):
 
 
 if __name__ == '__main__':
-    for time in ['202009', '202010', '202011', '202012', '202101', '202102', '202102', '202103']:
+    for time in ['202009', '202010', '202011', '202012', '202101', '202102', '202102', '202103', '202104']:
         df = per_xxz_data_clean(per_xxz_data_get(time))
         data_to_mysql(df)
         print("{time}数据处理完成".format(time=time))
