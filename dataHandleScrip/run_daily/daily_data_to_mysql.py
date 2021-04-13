@@ -1,7 +1,7 @@
 import pandas as pd
 import time
 from sqlalchemy import create_engine
-from data_to_mysql import per_xxz_data_clean, data_to_mysql
+from per_xxz_daily_info import per_xxz_data_clean, data_to_mysql
 
 cnn_xxz_log = create_engine("mysql+mysqlconnector://xxzlog:xxz@log@192.168.2.6:3306/xxz_log")
 cnn_root = create_engine("mysql+mysqlconnector://root:root@localhost:3306/dash")

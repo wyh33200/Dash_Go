@@ -2,7 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
-from apps import daily, student_daily_report, home
+from apps import daily, student_daily_report, home, temporary_qrcode
 from app import app
 
 # 侧边栏的样式参数。使用位置:固定和固定宽度
@@ -33,10 +33,11 @@ sidebar = html.Div(
         html.Hr(),
         dbc.Nav([
             dbc.NavItem(dbc.NavLink("首页", href="/", active="exact")),
-            html.H3('用户端数据概览', className='lead', style={}),
+            html.H3('用户端数据概览', className='lead', style={}),   # 导航
             dbc.NavItem(dbc.NavLink("每日数据概览", href="/per/report", active="exact", )),
             dbc.NavItem(dbc.NavLink("用户画像", href="/per/portrayal", active="exact", )),
-            html.H3('三端日报', className='lead', style={}),
+            dbc.NavItem(dbc.NavLink("莞就业推广二维码", href="/gov/QRcode", active="exact", )),
+            html.H3('三端日报', className='lead', style={}),        # 导航
             dbc.NavItem(dbc.NavLink("学生端日报", href="/page-2", active="exact", )),
         ],
             vertical="md",
@@ -52,13 +53,15 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
-    if pathname == "/":
+    if pathname == "/":     # 首页
         return home.layout_index
-    elif pathname == "/per/report":
+    elif pathname == "/per/report":  # 每日数据概览
         return daily.layout_index
-    elif pathname == "/per/portrayal":
+    elif pathname == "/per/portrayal":  # 用户画像
         return html.P("pass")
-    elif pathname == "/page-2":
+    elif pathname == "/gov/QRcode":    # 莞就业推广二维码
+        return temporary_qrcode.layout_index
+    elif pathname == "/page-2":     # 学生端日报
         return student_daily_report.layout_index
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron(

@@ -1,7 +1,7 @@
 import sys
 import datetime
 sys.path.append('../')
-from data_to_mysql_gov import *
+from per_gov_daily_info import *
 
 
 class GPI(GovPerInfo):

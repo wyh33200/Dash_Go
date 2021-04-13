@@ -13,7 +13,7 @@ import datetime
 
 from app import app
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", )
 
 cnn_root = create_engine("mysql+mysqlconnector://root:root@localhost:3306/dash")
@@ -95,6 +95,25 @@ def compare_data(today, yesterday):
         title_style = {"background-color": "Tomato"}
         font_style = {"color": "FireBrick", "font-size": "20px"}
     return link_relative_ratio, title_style, font_style
+
+
+def data_deal(table, diff, date):
+    if diff is "day":
+        sql = f'''
+        select count(distinct pid) from {table} where date = '{date}'
+        '''
+        uv = pd.read_sql(sql, cnn_root).loc[0][0]
+        date = datetime.datetime.strptime(date, "%Y-%m-%d").date() - datetime.timedelta(days=1)
+        sql = f'''
+                select count(distinct pid) from per_xxz_daily_info where date = '{date}'
+                '''
+        yest = pd.read_sql(sql, cnn_root).loc[0][0]
+        daily_ratio, daily_title_style, daily_font_style = compare_data(uv, yest)
+        uv_h2_children = f"当日日活为：{uv}"
+        uv_h4_children = f"前一日日活为{yest}，"
+        uv_h4_1_children = f"环比{daily_ratio}"
+        return daily_title_style, uv_h2_children, uv_h4_children, daily_font_style, uv_h4_1_children, daily_font_style
+
 
 
 @app.callback([Output('uv_title', 'style'),
