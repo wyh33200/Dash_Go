@@ -1,9 +1,8 @@
 import datetime
 import logging
 import time
-from datetime import timedelta
-
 import pandas as pd
+from datetime import timedelta
 from sqlalchemy import create_engine
 
 logger = logging.getLogger(__name__)
@@ -17,6 +16,7 @@ cnn_root = create_engine("mysql+mysqlconnector://root:root@localhost:3306/dash")
 
 class Weekly:
     """
+    累加报告，accumulation_report
     每个函数对应不同功能,
     规定第一个注释为返回数据的属性，如累加统计,
     第二个注释为函数的中文含义,
@@ -27,11 +27,8 @@ class Weekly:
         # 默认属性，统计时间，一般为周一
         # date = '2020-09-02 00:00:00'
         self.date = date.strftime("%Y-%m-%d")
-        data_ = datetime.datetime.strptime(self.date, "%Y-%m-%d").date()
-        data_ = data_ - timedelta(days=1)
-        self.tomorrow = (data_ - timedelta(days=1)).strftime("%Y-%m-%d")
-        data_ = data_.strftime("%Y-%m-%d")
-        self.yesterday = data_
+        self.tomorrow = (date + timedelta(days=1)).strftime("%Y-%m-%d")
+        self.yesterday = (date - timedelta(days=1)).strftime("%Y-%m-%d")
 
     def school_consult(self):
         # 累加统计
@@ -240,11 +237,13 @@ class Weekly:
 if __name__ == '__main__':
     start_date = datetime.datetime.strptime('2020-09-07', "%Y-%m-%d")
     end_date = datetime.datetime.strptime('2021-04-22', "%Y-%m-%d")
+    # start_date = datetime.datetime.strptime('2021-04-18', "%Y-%m-%d")
+    # end_date = datetime.datetime.strptime('2021-04-22', "%Y-%m-%d")
     while start_date < end_date:
         start_date += timedelta(days=1)
         data = Weekly(start_date)
         data.main()
         logging.info("数据清洗执行完毕")
-    # date = Weekly(datetime.datetime.strptime('2021-04-06', "%Y-%m-%d"))
+    # date = Weekly(datetime.datetime.strptime('2021-04-21', "%Y-%m-%d"))
     # date.main()
     # print(next(date.weekly_num()))
