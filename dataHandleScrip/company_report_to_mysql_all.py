@@ -1,8 +1,10 @@
-import pandas as pd
-import logging
 import datetime
-from sqlalchemy import create_engine
+import logging
 from datetime import timedelta
+
+import pandas as pd
+from sqlalchemy import create_engine
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", )
@@ -111,6 +113,7 @@ class CompanyReport:
         com_report.columns = ['UV', '查看简历', '查看简历次数', '邮箱查看简历', '邮箱查看简历次数', '下载简历', '下载简历次数',
                               '点击招聘会', '招聘会次数', '录入职位', '录入职位次数', '沟通页面', '沟通页面次数', '简历中心',
                               '简历中心次数', '企业中心', '企业中心次数', '录入企业信息', '录入企业信息次数']
+        com_report.index.name = 'date'
         logging.info(f"{self.date}数据清洗完成...")
         return com_report
 

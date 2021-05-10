@@ -1,12 +1,12 @@
+import datetime
+
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
-from sqlalchemy import create_engine
-import dash_bootstrap_components as dbc
-
 import pandas as pd
 import plotly.graph_objects as go
-import datetime
+from dash.dependencies import Input, Output
+from sqlalchemy import create_engine
+
 from app import app
 
 cnn_root = create_engine("mysql+mysqlconnector://root:root@localhost:3306/dash")
@@ -20,19 +20,19 @@ layout_index = html.Div([
             max_date_allowed=datetime.date(2021, 12, 31),
             display_format='Y-MM-DD',
             month_format='Y-MM',
-            start_date=datetime.date.today()-datetime.timedelta(days=7),
-            end_date=datetime.date.today()-datetime.timedelta(days=1)
+            start_date=datetime.date.today() - datetime.timedelta(days=7),
+            end_date=datetime.date.today() - datetime.timedelta(days=1)
         ),
         html.Div(id='output-container-date-picker-range')
     ]),
     html.P(),
-    dcc.Store(id='memory-output'),
+    dcc.Store(id='memory-output'),  # 的
     # html.Div(dcc.Graph(id='1'), style={'width': '24%', 'display': 'inline-block', }),
     # html.Div(dcc.Graph(id='2'), style={'width': '25%', 'display': 'inline-block', }),
     html.Div(id='bug'),
     html.Div([
         dcc.Graph(id='school_value', )
-            ], style={'width': '49%', 'display': 'inline-block', 'padding': '0 20'}
+    ], style={'width': '49%', 'display': 'inline-block', 'padding': '0 20'}
     ),
     html.Div([
         dcc.Graph(id='department_value'), dcc.Graph(id='major_value')
